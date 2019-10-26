@@ -4,8 +4,6 @@ function GameManager(size, InputManager, Actuator, StorageManager) {
   this.storageManager = new StorageManager;
   this.actuator       = new Actuator;
 
-  this.startTiles     = 2;
-
   this.inputManager.on("move", this.move.bind(this));
   this.inputManager.on("restart", this.restart.bind(this));
   this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
@@ -49,6 +47,7 @@ GameManager.prototype.setup = function () {
     this.over        = false;
     this.won         = false;
     this.keepPlaying = false;
+    this.blankTile   = new Tile({x: Math.floor(this.size / 2), y: Math.floor(this.size / 2)}, 1);
 
     // Add the initial tiles
     this.addStartTiles();
@@ -60,18 +59,16 @@ GameManager.prototype.setup = function () {
 
 // Set up the initial tiles to start the game with
 GameManager.prototype.addStartTiles = function () {
-  for (var i = 0; i < this.startTiles; i++) {
-    this.addRandomTile();
-  }
-};
+  this.grid.insertTile(this.blankTile);
 
-// Adds a tile in a random position
-GameManager.prototype.addRandomTile = function () {
-  if (this.grid.cellsAvailable()) {
-    var value = Math.random() < 0.9 ? 2 : 4;
-    var tile = new Tile(this.grid.randomAvailableCell(), value);
+  for (var i = 0; i < this.size * this.size; i++) {
+    var position = {x: Math.floor(i / this.size), y: i % this.size};
+    if (position.x != this.blankTile.x || position.y != this.blankTile.y) {
+      var value = Math.random() < 0.9 ? 2 : 4;
+      var tile = new Tile(position, value);
 
-    this.grid.insertTile(tile);
+      this.grid.insertTile(tile);
+    }
   }
 };
 
@@ -180,12 +177,9 @@ GameManager.prototype.move = function (direction) {
   });
 
   if (moved) {
-    this.addRandomTile();
-
     if (!this.movesAvailable()) {
       this.over = true; // Game over!
     }
-
     this.actuate();
   }
 };
