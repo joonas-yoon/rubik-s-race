@@ -155,7 +155,7 @@ GameManager.prototype.move = function (direction) {
 
   if (this.isGameTerminated()) return; // Don't do anything if the game's over
 
-  var vector     = this.getVector(direction);
+  var vector = this.getVector(direction);
 
   // Save the current tile positions and remove merger information
   this.prepareTiles();
@@ -178,8 +178,10 @@ GameManager.prototype.move = function (direction) {
 };
 
 GameManager.prototype.submitAnswer = function () {
-  var rectPartial = this.grid.getColorsInRect(1, 1, 3, 3);
-  var rectAnswer = this.answer.getColorsInRect(0, 0, this.answer.size - 1, this.answer.size - 1);
+  var partialBound = this.grid.size - 2;
+  var answerBound  = this.answer.size - 1;
+  var rectPartial  = this.grid.getColorsInRect(1, 1, partialBound, partialBound);
+  var rectAnswer   = this.answer.getColorsInRect(0, 0, answerBound, answerBound);
   return rectPartial.toString() == rectAnswer.toString();
 };
 
@@ -198,10 +200,6 @@ GameManager.prototype.getVector = function (direction) {
 
 GameManager.prototype.findNextPosition = function (cell, vector) {
   return { x: cell.x + vector.x, y: cell.y + vector.y };
-};
-
-GameManager.prototype.movesAvailable = function () {
-  return this.grid.cellsAvailable() || this.tileMatchesAvailable();
 };
 
 GameManager.prototype.positionsEqual = function (first, second) {

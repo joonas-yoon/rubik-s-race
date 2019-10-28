@@ -33,18 +33,6 @@ Grid.prototype.fromState = function (state) {
   return cells;
 };
 
-Grid.prototype.availableCells = function () {
-  var cells = [];
-
-  this.eachCell(function (x, y, tile) {
-    if (!tile) {
-      cells.push({ x: x, y: y });
-    }
-  });
-
-  return cells;
-};
-
 Grid.prototype.coloredCells = function () {
   var cells = [];
 
@@ -76,20 +64,6 @@ Grid.prototype.eachCell = function (callback) {
       callback(x, y, this.cells[x][y]);
     }
   }
-};
-
-// Check if there are any cells available
-Grid.prototype.cellsAvailable = function () {
-  return !!this.availableCells().length;
-};
-
-// Check if the specified cell is taken
-Grid.prototype.cellAvailable = function (cell) {
-  return !this.cellOccupied(cell);
-};
-
-Grid.prototype.cellOccupied = function (cell) {
-  return !!this.cellContent(cell);
 };
 
 Grid.prototype.cellContent = function (cell) {

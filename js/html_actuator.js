@@ -70,8 +70,6 @@ HTMLActuator.prototype.addTile = function (tile) {
   // We can't use classlist because it somehow glitches when replacing classes
   var classes = ["tile", "tile-" + tile.value, positionClass];
 
-  if (tile.value > 2048) classes.push("tile-super");
-
   this.applyClasses(wrapper, classes);
 
   inner.classList.add("tile-inner");
@@ -82,14 +80,6 @@ HTMLActuator.prototype.addTile = function (tile) {
     window.requestAnimationFrame(function () {
       classes[2] = self.positionClass({ x: tile.x, y: tile.y });
       self.applyClasses(wrapper, classes); // Update the position
-    });
-  } else if (tile.mergedFrom) {
-    classes.push("tile-merged");
-    this.applyClasses(wrapper, classes);
-
-    // Render the tiles that merged
-    tile.mergedFrom.forEach(function (merged) {
-      self.addTile(merged);
     });
   } else {
     classes.push("tile-new");
