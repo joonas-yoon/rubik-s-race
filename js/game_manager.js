@@ -33,6 +33,8 @@ GameManager.prototype.isGameTerminated = function () {
 GameManager.prototype.setup = function () {
   var previousState = this.storageManager.getGameState();
 
+  var middle = Math.floor(this.size / 2);
+
   // Reload the game from a previous game if present
   if (previousState) {
     this.grid        = new Grid(previousState.grid.size,
@@ -51,7 +53,7 @@ GameManager.prototype.setup = function () {
     this.over        = false;
     this.won         = false;
     this.keepPlaying = false;
-    this.blankTile   = new Tile({x: Math.floor(this.size / 2), y: Math.floor(this.size / 2)}, null);
+    this.blankTile   = new Tile({x: middle, y: middle}, 0);
     this.answer      = null;
 
     // Add the initial tiles
@@ -64,11 +66,9 @@ GameManager.prototype.setup = function () {
 
 // Set up the initial tiles to start the game with
 GameManager.prototype.addStartTiles = function () {
-  this.grid.insertTile(this.blankTile);
-
   for (var i = 0; i < this.size * this.size; i++) {
     var position = {x: Math.floor(i / this.size), y: i % this.size};
-    if (position.x != this.blankTile.x || position.y != this.blankTile.y) {
+    if (!this.positionsEqual(position, this.blankTile)) {
       var value = 1 << (Math.floor(Math.random() * 5) + 1);
       var tile = new Tile(position, value);
 
