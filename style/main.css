@@ -137,6 +137,28 @@ hr {
 
   100% {
     opacity: 1; } }
+.answer-container {
+  margin-top: 10px;
+  position: relative;
+  height: 120px;
+} 
+  .answer-container .grid-container {
+    position: absolute;
+    z-index: 1;
+    padding: 10px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .answer-container .grid-row {
+    margin-bottom: 7.5px; }
+
+  .answer-container .grid-cell {
+    width: 25px;
+    height: 25px;
+    margin-right: 7.5px; }
+
 .game-container {
   margin-top: 10px;
   position: relative;
@@ -383,25 +405,25 @@ hr {
     font-weight: bold;
     z-index: 10;
     font-size: 42px; }
-  .tile.tile-2 .tile-inner {
+  .tile.tile-2 .tile-inner, .answer-tile-2 {
     background: #0c4c83;
     box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0); }
-  .tile.tile-4 .tile-inner {
+  .tile.tile-4 .tile-inner, .answer-tile-4 {
     background: #ffffff;
     box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0); }
-  .tile.tile-8 .tile-inner {
+  .tile.tile-8 .tile-inner, .answer-tile-8 {
     color: #ac0b0b;
     background: #ac0b0b; }
-  .tile.tile-16 .tile-inner {
+  .tile.tile-16 .tile-inner, .answer-tile-16 {
     color: #fff401;
     background: #fff401; }
-  .tile.tile-32 .tile-inner {
+  .tile.tile-32 .tile-inner, .answer-tile-32 {
     color: #679c4d;
     background: #679c4d; }
-  .tile.tile-64 .tile-inner {
+  .tile.tile-64 .tile-inner, .answer-tile-64 {
     color: #797979;
     background: #797979; }
-  .tile.tile-128 .tile-inner {
+  .tile.tile-128 .tile-inner, .answer-tile-128 {
     color: #edcf72;
     background: #edcf72;
     box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.2381), inset 0 0 0 1px rgba(255, 255, 255, 0.14286);

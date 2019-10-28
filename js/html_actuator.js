@@ -2,6 +2,7 @@ function HTMLActuator() {
   this.tileContainer    = document.querySelector(".tile-container");
   this.scoreContainer   = document.querySelector(".score-container");
   this.bestContainer    = document.querySelector(".best-container");
+  this.answerContainer  = document.querySelector(".answer-container");
   this.messageContainer = document.querySelector(".game-message");
 
   this.score = 0;
@@ -23,6 +24,7 @@ HTMLActuator.prototype.actuate = function (grid, metadata) {
 
     self.updateScore(metadata.score);
     self.updateBestScore(metadata.bestScore);
+    self.updateAnswer(metadata.answer);
 
     if (metadata.terminated) {
       if (metadata.over) {
@@ -44,6 +46,17 @@ HTMLActuator.prototype.clearContainer = function (container) {
   while (container.firstChild) {
     container.removeChild(container.firstChild);
   }
+};
+
+HTMLActuator.prototype.updateAnswer = function (grid) {
+  var self = this;
+  grid.cells.forEach(function(row, idx){
+    row.forEach(function(tile, idx){
+      var position = 'answer-position-' + (tile.y + 1) + '-' + (tile.x + 1);
+      var value = 'answer-tile-' + tile.value;
+      self.applyClasses(self.answerContainer.querySelector('.' + position), ['grid-cell', position, value]);
+    });
+  });
 };
 
 HTMLActuator.prototype.addTile = function (tile) {
