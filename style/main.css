@@ -368,7 +368,8 @@ hr {
   transition-property: transform; }
   .tile .tile-inner {
     border-radius: 3px;
-    background: #eee4da;
+    color: transparent;
+    background: transparent;
     text-align: center;
     font-weight: bold;
     z-index: 10;

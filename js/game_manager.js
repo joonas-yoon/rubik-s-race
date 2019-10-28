@@ -41,13 +41,15 @@ GameManager.prototype.setup = function () {
     this.over        = previousState.over;
     this.won         = previousState.won;
     this.keepPlaying = previousState.keepPlaying;
+    this.blankTile   = new Tile(previousState.blankTile.position,
+                                previousState.blankTile.value);
   } else {
     this.grid        = new Grid(this.size);
     this.score       = 0;
     this.over        = false;
     this.won         = false;
     this.keepPlaying = false;
-    this.blankTile   = new Tile({x: Math.floor(this.size / 2), y: Math.floor(this.size / 2)}, 1);
+    this.blankTile   = new Tile({x: Math.floor(this.size / 2), y: Math.floor(this.size / 2)}, null);
 
     // Add the initial tiles
     this.addStartTiles();
@@ -64,12 +66,30 @@ GameManager.prototype.addStartTiles = function () {
   for (var i = 0; i < this.size * this.size; i++) {
     var position = {x: Math.floor(i / this.size), y: i % this.size};
     if (position.x != this.blankTile.x || position.y != this.blankTile.y) {
-      var value = Math.random() < 0.9 ? 2 : 4;
+      var value = 1 << (Math.floor(Math.random() * 5) + 1);
       var tile = new Tile(position, value);
 
       this.grid.insertTile(tile);
     }
   }
+
+  this.generateAnswer(this.grid);
+};
+
+GameManager.prototype.generateAnswer = function (grid) {
+  var cells = grid.coloredCells();
+  while (cells.length > 3 * 3) {
+    cells.splice(Math.floor(Math.random() * cells.length), 1);
+  }
+
+  var self = this;
+  self.answer = new Grid(3);
+  cells.forEach(function(tile, idx){
+    var pos = {
+      x: idx % 3, y: Math.floor(idx / 3)
+    };
+    self.answer.cells[pos.x][pos.y] = new Tile(pos, tile.value);
+  });
 };
 
 // Sends the updated grid to the actuator
@@ -102,7 +122,8 @@ GameManager.prototype.serialize = function () {
     score:       this.score,
     over:        this.over,
     won:         this.won,
-    keepPlaying: this.keepPlaying
+    keepPlaying: this.keepPlaying,
+    blankTile:   this.blankTile.serialize()
   };
 };
 
@@ -130,51 +151,19 @@ GameManager.prototype.move = function (direction) {
 
   if (this.isGameTerminated()) return; // Don't do anything if the game's over
 
-  var cell, tile;
-
   var vector     = this.getVector(direction);
-  var traversals = this.buildTraversals(vector);
-  var moved      = false;
 
   // Save the current tile positions and remove merger information
   this.prepareTiles();
 
-  // Traverse the grid in the right direction and move tiles
-  traversals.x.forEach(function (x) {
-    traversals.y.forEach(function (y) {
-      cell = { x: x, y: y };
-      tile = self.grid.cellContent(cell);
+  var position = this.findNextPosition(self.blankTile, vector);
+  var tile     = self.grid.cellContent(position);
+  if (tile && !this.positionsEqual(self.blankTile, tile)) {
+    var previous = {x: self.blankTile.x, y: self.blankTile.y};
+    this.moveTile(self.blankTile, position);
+    this.moveTile(tile, previous);
 
-      if (tile) {
-        var positions = self.findFarthestPosition(cell, vector);
-        var next      = self.grid.cellContent(positions.next);
-
-        // Only one merger per row traversal?
-        if (next && next.value === tile.value && !next.mergedFrom) {
-          var merged = new Tile(positions.next, tile.value * 2);
-          merged.mergedFrom = [tile, next];
-
-          self.grid.insertTile(merged);
-          self.grid.removeTile(tile);
-
-          // Converge the two tiles' positions
-          tile.updatePosition(positions.next);
-
-          // Update the score
-          self.score += merged.value;
-
-          // The mighty 2048 tile
-          if (merged.value === 2048) self.won = true;
-        } else {
-          self.moveTile(tile, positions.farthest);
-        }
-
-        if (!self.positionsEqual(cell, tile)) {
-          moved = true; // The tile moved from its original cell!
-        }
-      }
-    });
-  });
+    this.score += 1;
 
   if (moved) {
     if (!this.movesAvailable()) {
@@ -197,68 +186,12 @@ GameManager.prototype.getVector = function (direction) {
   return map[direction];
 };
 
-// Build a list of positions to traverse in the right order
-GameManager.prototype.buildTraversals = function (vector) {
-  var traversals = { x: [], y: [] };
-
-  for (var pos = 0; pos < this.size; pos++) {
-    traversals.x.push(pos);
-    traversals.y.push(pos);
-  }
-
-  // Always traverse from the farthest cell in the chosen direction
-  if (vector.x === 1) traversals.x = traversals.x.reverse();
-  if (vector.y === 1) traversals.y = traversals.y.reverse();
-
-  return traversals;
-};
-
-GameManager.prototype.findFarthestPosition = function (cell, vector) {
-  var previous;
-
-  // Progress towards the vector direction until an obstacle is found
-  do {
-    previous = cell;
-    cell     = { x: previous.x + vector.x, y: previous.y + vector.y };
-  } while (this.grid.withinBounds(cell) &&
-           this.grid.cellAvailable(cell));
-
-  return {
-    farthest: previous,
-    next: cell // Used to check if a merge is required
-  };
+GameManager.prototype.findNextPosition = function (cell, vector) {
+  return { x: cell.x + vector.x, y: cell.y + vector.y };
 };
 
 GameManager.prototype.movesAvailable = function () {
   return this.grid.cellsAvailable() || this.tileMatchesAvailable();
-};
-
-// Check for available matches between tiles (more expensive check)
-GameManager.prototype.tileMatchesAvailable = function () {
-  var self = this;
-
-  var tile;
-
-  for (var x = 0; x < this.size; x++) {
-    for (var y = 0; y < this.size; y++) {
-      tile = this.grid.cellContent({ x: x, y: y });
-
-      if (tile) {
-        for (var direction = 0; direction < 4; direction++) {
-          var vector = self.getVector(direction);
-          var cell   = { x: x + vector.x, y: y + vector.y };
-
-          var other  = self.grid.cellContent(cell);
-
-          if (other && other.value === tile.value) {
-            return true; // These two tiles can be merged
-          }
-        }
-      }
-    }
-  }
-
-  return false;
 };
 
 GameManager.prototype.positionsEqual = function (first, second) {
