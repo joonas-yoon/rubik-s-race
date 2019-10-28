@@ -57,6 +57,18 @@ Grid.prototype.coloredCells = function () {
   return cells;
 };
 
+Grid.prototype.getColorsInRect = function (x1, y1, x2, y2) {
+  var cells = [];
+
+  for (var x = x1; x <= this.size && x <= x2; x++) {
+    for (var y = y1; y <= this.size && y <= y2; y++) {
+      cells.push(this.cells[x][y] ? this.cells[x][y].value : 0);
+    }
+  }
+
+  return cells;
+};
+
 // Call callback for every cell
 Grid.prototype.eachCell = function (callback) {
   for (var x = 0; x < this.size; x++) {

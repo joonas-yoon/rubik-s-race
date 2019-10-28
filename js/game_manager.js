@@ -43,6 +43,8 @@ GameManager.prototype.setup = function () {
     this.keepPlaying = previousState.keepPlaying;
     this.blankTile   = new Tile(previousState.blankTile.position,
                                 previousState.blankTile.value);
+    this.answer      = new Grid(previousState.answer.size,
+                                previousState.answer.cells);
   } else {
     this.grid        = new Grid(this.size);
     this.score       = 0;
@@ -50,6 +52,7 @@ GameManager.prototype.setup = function () {
     this.won         = false;
     this.keepPlaying = false;
     this.blankTile   = new Tile({x: Math.floor(this.size / 2), y: Math.floor(this.size / 2)}, null);
+    this.answer      = null;
 
     // Add the initial tiles
     this.addStartTiles();
@@ -110,7 +113,8 @@ GameManager.prototype.actuate = function () {
     over:       this.over,
     won:        this.won,
     bestScore:  this.storageManager.getBestScore(),
-    terminated: this.isGameTerminated()
+    terminated: this.isGameTerminated(),
+    answer:     this.answer
   });
 
 };
@@ -123,7 +127,8 @@ GameManager.prototype.serialize = function () {
     over:        this.over,
     won:         this.won,
     keepPlaying: this.keepPlaying,
-    blankTile:   this.blankTile.serialize()
+    blankTile:   this.blankTile.serialize(),
+    answer:      this.answer.serialize()
   };
 };
 
@@ -165,12 +170,18 @@ GameManager.prototype.move = function (direction) {
 
     this.score += 1;
 
-  if (moved) {
-    if (!this.movesAvailable()) {
-      this.over = true; // Game over!
+    if (this.submitAnswer()) {
+      this.won = true;
     }
+
     this.actuate();
   }
+};
+
+GameManager.prototype.submitAnswer = function () {
+  var rectPartial = this.grid.getColorsInRect(1, 1, 3, 3);
+  var rectAnswer = this.answer.getColorsInRect(0, 0, this.answer.size - 1, this.answer.size - 1);
+  return rectPartial.toString() == rectAnswer.toString();
 };
 
 // Get the vector representing the chosen direction
