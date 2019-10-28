@@ -121,7 +121,11 @@ HTMLActuator.prototype.updateScore = function (score) {
 };
 
 HTMLActuator.prototype.updateBestScore = function (bestScore) {
-  this.bestContainer.textContent = bestScore;
+  if (bestScore === Number.POSITIVE_INFINITY){
+    this.bestContainer.textContent = '-';
+  } else {
+    this.bestContainer.textContent = bestScore;
+  }
 };
 
 HTMLActuator.prototype.message = function (won) {

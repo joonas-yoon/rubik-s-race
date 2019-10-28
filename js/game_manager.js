@@ -97,14 +97,13 @@ GameManager.prototype.generateAnswer = function (grid) {
 
 // Sends the updated grid to the actuator
 GameManager.prototype.actuate = function () {
-  if (this.storageManager.getBestScore() < this.score) {
-    this.storageManager.setBestScore(this.score);
-  }
-
   // Clear the state when the game is over (game over only, not win)
   if (this.over) {
     this.storageManager.clearGameState();
   } else {
+    if (this.won && this.storageManager.getBestScore() > this.score) {
+      this.storageManager.setBestScore(this.score);
+    }
     this.storageManager.setGameState(this.serialize());
   }
 
