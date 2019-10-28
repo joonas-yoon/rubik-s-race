@@ -23,13 +23,13 @@ HTMLActuator.prototype.actuate = function (grid, metadata) {
     });
 
     self.updateScore(metadata.score);
-    self.updateBestScore(metadata.bestScore);
     self.updateAnswer(metadata.answer);
 
     if (metadata.terminated) {
       if (metadata.over) {
         self.message(false); // You lose
       } else if (metadata.won) {
+        self.updateBestScore(metadata.bestScore);
         self.message(true); // You win!
       }
     }
