@@ -187,10 +187,10 @@ GameManager.prototype.submitAnswer = function () {
 GameManager.prototype.getVector = function (direction) {
   // Vectors representing tile movement
   var map = {
-    0: { x: 0,  y: -1 }, // Up
-    1: { x: 1,  y: 0 },  // Right
-    2: { x: 0,  y: 1 },  // Down
-    3: { x: -1, y: 0 }   // Left
+    0: { x: 0,  y: 1 },  // Down
+    1: { x: -1, y: 0 },  // Left
+    2: { x: 0,  y: -1 }, // Up
+    3: { x: 1,  y: 0 }   // Right
   };
 
   return map[direction];
