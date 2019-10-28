@@ -201,6 +201,15 @@ hr {
     .game-container .game-message.game-won, .game-container .game-message.game-over {
       display: block; }
 
+.game-container .answer-zone {
+  position: absolute;
+  background: #24232d;
+  width: 306px;
+  height: 306px;
+  border-radius: 10px;
+  top: 97px;
+  left: 97px; }
+
 .grid-container {
   position: absolute;
   z-index: 1; }
