@@ -22,6 +22,14 @@ h1.title {
   display: block;
   float: left; }
 
+.footer {
+  margin-top: 3em;
+  text-align: center; }
+  .footer .text {
+    margin: 0 auto;
+    font-size: 80%;
+    color: rgba(255, 255, 255, .5); }
+
 @-webkit-keyframes move-up {
   0% {
     top: 25px;
