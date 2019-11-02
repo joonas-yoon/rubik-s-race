@@ -125,6 +125,35 @@ KeyboardInputManager.prototype.listen = function () {
       self.emit("move", absDx > absDy ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0));
     }
   });
+
+  var dragStartClientX, dragStartClientY, isDragging = false;
+
+  gameContainer.addEventListener("mousedown", function (event) {
+    isDragging = true;
+    dragStartClientX = event.clientX;
+    dragStartClientY = event.clientY;
+    event.preventDefault();
+  });
+
+  gameContainer.addEventListener("mouseup", function (event) {
+    if (!isDragging) return;
+    
+    var dragEndClientX = event.clientX;
+    var dragEndClientY = event.clientY;
+
+    var dx = dragEndClientX - dragStartClientX;
+    var absDx = Math.abs(dx);
+
+    var dy = dragEndClientY - dragStartClientY;
+    var absDy = Math.abs(dy);
+
+    if (Math.max(absDx, absDy) > 10) {
+      // (right : left) : (down : up)
+      self.emit("move", absDx > absDy ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0));
+    }
+
+    isDragging = false;
+  });
 };
 
 KeyboardInputManager.prototype.restart = function (event) {

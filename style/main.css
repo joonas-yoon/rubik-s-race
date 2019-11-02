@@ -171,7 +171,7 @@ hr {
   margin-top: 10px;
   position: relative;
   padding: 15px;
-  cursor: default;
+  cursor: grab;
   -webkit-touch-callout: none;
   -ms-touch-callout: none;
   -webkit-user-select: none;
@@ -186,6 +186,8 @@ hr {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box; }
+  .game-container:active {
+    cursor: grabbing; }
   .game-container .game-message {
     display: none;
     position: absolute;
