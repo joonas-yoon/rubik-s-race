@@ -49,6 +49,17 @@ KeyboardInputManager.prototype.listen = function () {
     65: 3  // A
   };
 
+  var getDirectionFromVector = function (dx, dy) {
+    var absDx = Math.abs(dx);
+    var absDy = Math.abs(dy);
+
+    if (Math.max(absDx, absDy) > 10) {
+      // (right : left) : (down : up)
+      return absDx > absDy ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0);
+    }
+    return -1;
+  };
+
   // Respond to direction keys
   document.addEventListener("keydown", function (event) {
     var modifiers = event.altKey || event.ctrlKey || event.metaKey ||
@@ -115,15 +126,39 @@ KeyboardInputManager.prototype.listen = function () {
     }
 
     var dx = touchEndClientX - touchStartClientX;
-    var absDx = Math.abs(dx);
-
     var dy = touchEndClientY - touchStartClientY;
-    var absDy = Math.abs(dy);
+    var direction = getDirectionFromVector(dx, dy);
 
-    if (Math.max(absDx, absDy) > 10) {
-      // (right : left) : (down : up)
-      self.emit("move", absDx > absDy ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0));
+    if (direction >= 0){
+      self.emit("move", direction);
     }
+  });
+
+  var dragStartClientX, dragStartClientY, isDragging = false;
+
+  gameContainer.addEventListener("mousedown", function (event) {
+    isDragging = true;
+
+    dragStartClientX = event.clientX;
+    dragStartClientY = event.clientY;
+
+    event.preventDefault();
+  });
+
+  gameContainer.addEventListener("mouseup", function (event) {
+    if (!isDragging) {
+      return;
+    }
+
+    var dx = event.clientX - dragStartClientX;
+    var dy = event.clientY - dragStartClientY;
+    var direction = getDirectionFromVector(dx, dy);
+
+    if (direction >= 0){
+      self.emit("move", direction);
+    }
+
+    isDragging = false;
   });
 };
 
