@@ -16,7 +16,7 @@ body {
   clear: both; }
 
 h1.title {
-  font-size: 68px;
+  font-size: 50px;
   font-weight: bold;
   margin: 0;
   display: block;
@@ -431,8 +431,8 @@ hr {
     color: #679c4d;
     background: #679c4d; }
   .tile.tile-64 .tile-inner, .answer-tile-64 {
-    color: #797979;
-    background: #797979; }
+    color: #ff9e02;
+    background: #ff9e02; }
   .tile.tile-128 .tile-inner, .answer-tile-128 {
     color: #edcf72;
     background: #edcf72;
@@ -629,8 +629,8 @@ hr {
     padding: 0 20px; }
 
   h1.title {
-    font-size: 27px;
-    margin-top: 15px; }
+    font-size: 22px;
+    margin-top: 24px; }
 
   .container {
     width: 280px;

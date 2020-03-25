@@ -66,11 +66,27 @@ GameManager.prototype.setup = function () {
 
 // Set up the initial tiles to start the game with
 GameManager.prototype.addStartTiles = function () {
-  for (var i = 0; i < this.size * this.size; i++) {
+  var colors = [];
+  // n^2 - 1 cells equal to (n-2)*(n-1)
+  // thus, each n-1 cells with n-2 colors
+  for (var i = 0; i < this.size - 1; i++) {
+    for (var j = 0; j < this.size + 1; j++) {
+      // the value is 2^k which means color
+      colors.push(1 << (j + 1));
+    }
+  }
+  // shuffle colors
+  for (var i = 1; i < colors.length; i++) {
+    var j = Math.floor(Math.random() * i);
+    var t = colors[i - 1];
+    colors[i - 1] = colors[j];
+    colors[j] = t;
+  }
+  for (var i = 0, color_idx = 0; i < this.size * this.size; i++) {
     var position = {x: Math.floor(i / this.size), y: i % this.size};
     if (!this.positionsEqual(position, this.blankTile)) {
-      var value = 1 << (Math.floor(Math.random() * 5) + 1);
-      var tile = new Tile(position, value);
+      var tile = new Tile(position, colors[color_idx]);
+      color_idx++;
 
       this.grid.insertTile(tile);
     }
